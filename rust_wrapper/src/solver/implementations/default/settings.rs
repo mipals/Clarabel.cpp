@@ -8,6 +8,13 @@ pub enum ClarabelDirectSolveMethods {
     // CHOLMOD, (not supported yet)
 }
 
+#[repr(C)]
+pub enum ClarabelChordalDecompositions {
+    CliqueGraph,
+    ParentChild,
+    None,
+}
+
 /// DefaultSettings struct used by the C side
 #[repr(C)]
 pub struct ClarabelDefaultSettings<T: FloatT> {
@@ -67,6 +74,15 @@ pub struct ClarabelDefaultSettings<T: FloatT> {
 
     // preprocessing
     pub presolve_enable: bool,
+
+    #[cfg(feature = "sdp")]
+    pub chordal_decomposition_enable: bool,
+    #[cfg(feature = "sdp")]
+    pub chordal_decomposition_merge_method: ClarabelChordalDecompositions,
+    #[cfg(feature = "sdp")]
+    pub chordal_decomposition_compact: bool,
+    #[cfg(feature = "sdp")]
+    pub chordal_decomposition_complete_dual: bool
 }
 
 /// Wrapper function for DefaultSettings::default()
@@ -80,6 +96,14 @@ fn _internal_DefaultSettings_default<T: FloatT>() -> ClarabelDefaultSettings<T> 
         //"mkl" => ClarabelDirectSolveMethods::MKL,
         //"cholmod" => ClarabelDirectSolveMethods::CHOLMOD,
         _ => ClarabelDirectSolveMethods::QDLDL, // Default
+    };
+
+    #[cfg(feature = "sdp")]
+    let default_chordal_decomposition_merge_method = match default.chordal_decomposition_merge_method.as_str() {
+        "clique_graph" => ClarabelChordalDecompositions::CliqueGraph,
+        "parent_child" => ClarabelChordalDecompositions::ParentChild,
+        "none" => ClarabelChordalDecompositions::None,
+        _ => ClarabelChordalDecompositions::CliqueGraph, // Default
     };
 
     // Assign all fields to the C struct
@@ -121,6 +145,14 @@ fn _internal_DefaultSettings_default<T: FloatT>() -> ClarabelDefaultSettings<T> 
         iterative_refinement_max_iter: default.iterative_refinement_max_iter,
         iterative_refinement_stop_ratio: default.iterative_refinement_stop_ratio,
         presolve_enable: default.presolve_enable,
+        #[cfg(feature = "sdp")]
+        chordal_decomposition_enable: default.chordal_decomposition_enable,
+        #[cfg(feature = "sdp")]
+        chordal_decomposition_merge_method: default_chordal_decomposition_merge_method,
+        #[cfg(feature = "sdp")]
+        chordal_decomposition_compact: default.chordal_decomposition_compact,
+        #[cfg(feature = "sdp")]
+        chordal_decomposition_complete_dual: default.chordal_decomposition_complete_dual,
     }
 }
 

@@ -13,6 +13,13 @@ enum class ClarabelDirectSolveMethods
     // CHOLMOD, (not supported in Rust yet)
 };
 
+enum class ClarabelChordalDecompositions {
+  CliqueGraph,
+  ParentChild,
+  None,
+};
+
+
 template<typename T = double>
 struct DefaultSettings
 {
@@ -55,6 +62,12 @@ struct DefaultSettings
     uint32_t iterative_refinement_max_iter;
     T iterative_refinement_stop_ratio;
     bool presolve_enable;
+    #ifdef FEATURE_SDP
+    bool chordal_decomposition_enable;
+    ClarabelChordalDecompositions chordal_decomposition_merge_method;
+    bool chordal_decomposition_compact;
+    bool chordal_decomposition_complete_dual;
+    #endif
 
     static DefaultSettings<T> default_settings();
 };
@@ -298,6 +311,32 @@ class DefaultSettingsBuilder
         settings.presolve_enable = presolve_enable;
         return *this;
     }
+
+    #ifdef FEATURE_SDP
+    DefaultSettingsBuilder<T> &chordal_decomposition_enable(bool chordal_decomposition_enable)
+    {
+        settings.chordal_decomposition_enable = chordal_decomposition_enable;
+        return *this;
+    }
+
+    DefaultSettingsBuilder<T> &chordal_decomposition_merge_method(ClarabelChordalDecompositions chordal_decomposition_merge_method)
+    {
+        settings.chordal_decomposition_merge_method = chordal_decomposition_merge_method;
+        return *this;
+    }
+
+    DefaultSettingsBuilder<T> &chordal_decomposition_compact(bool chordal_decomposition_compact)
+    {
+        settings.chordal_decomposition_compact = chordal_decomposition_compact;
+        return *this;
+    }
+
+    DefaultSettingsBuilder<T> &chordal_decomposition_complete_dual(bool chordal_decomposition_complete_dual)
+    {
+        settings.chordal_decomposition_complete_dual = chordal_decomposition_complete_dual;
+        return *this;
+    }
+    #endif
 };
 
 extern "C" {
