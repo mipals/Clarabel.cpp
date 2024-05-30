@@ -21,6 +21,12 @@ add_executable(clarabel_cpp_tests
     basic_lp.cpp
     basic_qp.cpp
     basic_unconstrained.cpp
+    basic_eq_constrained.cpp
+    basic_socp.cpp
+    basic_sdp.cpp
+    basic_powcone.cpp
+    basic_genpowcone.cpp
+    basic_expcone.cpp
     mixed_conic.cpp
     data_updating.cpp
 )
