@@ -29,6 +29,7 @@ add_executable(clarabel_cpp_tests
     basic_expcone.cpp
     mixed_conic.cpp
     data_updating.cpp
+    sdp_chordal.cpp
 )
 target_link_libraries(clarabel_cpp_tests 
     libclarabel_c_shared
